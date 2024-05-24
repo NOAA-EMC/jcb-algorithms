@@ -168,3 +168,12 @@ output variance posterior:
 {% include output_variance_posterior_file %}
 {% endfilter %}
 {% endif %}
+
+# Optionally test the application
+{% if test_file is defined %}
+test:
+{% filter indent(width=2) %}
+{% set test_file = test_file|default('test', true) ~ '.yaml.j2' %}
+{% include test_file %}
+{% endfilter %}
+{% endif %}

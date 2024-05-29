@@ -11,6 +11,7 @@
   observer_nesting:
   - cost function
   - observations
+  - observers
   components:
   - obs space
   - obs operator
@@ -28,6 +29,7 @@
 hofx3d: &hofx
   observer_nesting:
   - observations
+  - observers
   components:
   - obs space
   - obs operator
@@ -43,6 +45,7 @@ hofx4d: *hofx
 local_ensemble_da:
   observer_nesting:
   - observations
+  - observers
   components:
   - obs space
   - obs operator

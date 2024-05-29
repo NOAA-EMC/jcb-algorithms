@@ -1,3 +1,6 @@
+# Set the model component to be used in later configuration
+{% set model_component = model_component|default('model_component') %}
+
 cost function:
 
   cost type: {{cost_type}}
@@ -9,7 +12,7 @@ cost function:
 
   geometry:
 {% filter indent(width=4) %}
-{% set geometry_background_file = geometry_background_file|default('geometry_background', true) ~ '.yaml.j2' %}
+{% set geometry_background_file = geometry_background_file|default(model_component ~ 'geometry_background', true) ~ '.yaml.j2' %}
 {% include geometry_background_file %}
 {% endfilter %}
 
@@ -17,27 +20,18 @@ cost function:
 
   background:
 {% filter indent(width=4) %}
-{% set background_file = background_file|default('background', true) ~ '.yaml.j2' %}
+{% set background_file = background_file|default(model_component ~ 'background', true) ~ '.yaml.j2' %}
 {% include background_file %}
 {% endfilter %}
 
   background error:
 {% filter indent(width=4) %}
-{% set background_error_file = background_error_file|default('background_error', true) ~ '.yaml.j2' %}
+{% set background_error_file = background_error_file|default(model_component ~ 'background_error', true) ~ '.yaml.j2' %}
 {% include background_error_file %}
 {% endfilter %}
 
   observations:
-
-# There is a conditional here in case this 3DVar YAML is being used for EDA
-{% if obs_perturbations_file is defined %}
-    obs perturbations:
-{% filter indent(width=6) %}
-{% set obs_perturbations_file = obs_perturbations_file|default('obs_perturbations', true) ~ '.yaml.j2' %}
-{% include obs_perturbations_file %}
-{% endfilter %}
-{% endif %}
-
+    obs perturbations: {{ obs_perturbations | default(false, true) }}
     observers:
 {% for observation_from_jcb in observations %}
 {% if use_observer(observation_from_jcb) %}
@@ -54,7 +48,7 @@ variational:
 # Loop over outer loops
 {% for i in range(1, number_of_outer_loops+1) %}
 {% filter indent(width=2) %}
-{% set var_outer_loop_file = '3dvar_outer_loop_' + i|string + '.yaml.j2' %}
+{% set var_outer_loop_file = model_component ~ '3dvar_outer_loop_' + i|string + '.yaml.j2' %}
 {% include var_outer_loop_file %}
 {% endfilter %}
 {% endfor %}
@@ -71,7 +65,7 @@ final:
 {% if final_increment_to_latlon_file is defined %}
   increment to latlon:
 {% filter indent(width=4) %}
-{% set final_increment_to_latlon_file = final_increment_to_latlon_file|default('final_increment_to_latlon', true) ~ '.yaml.j2' %}
+{% set final_increment_to_latlon_file = final_increment_to_latlon_file|default(model_component ~ 'final_increment_to_latlon', true) ~ '.yaml.j2' %}
 {% include final_increment_to_latlon_file %}
 {% endfilter %}
 {% endif %}
@@ -79,7 +73,7 @@ final:
 {% if final_analysis_to_latlon_file is defined %}
   analysis to latlon:
 {% filter indent(width=4) %}
-{% set final_analysis_to_latlon_file = final_analysis_to_latlon_file|default('final_analysis_to_latlon', true) ~ '.yaml.j2' %}
+{% set final_analysis_to_latlon_file = final_analysis_to_latlon_file|default(model_component ~ 'final_analysis_to_latlon', true) ~ '.yaml.j2' %}
 {% include final_analysis_to_latlon_file %}
 {% endfilter %}
 {% endif %}
@@ -87,7 +81,7 @@ final:
 {% if final_increment_file is defined %}
   increment:
 {% filter indent(width=4) %}
-{% set final_increment_file = final_increment_file|default('final_increment', true) ~ '.yaml.j2' %}
+{% set final_increment_file = final_increment_file|default(model_component ~ 'final_increment', true) ~ '.yaml.j2' %}
 {% include final_increment_file %}
 {% endfilter %}
 {% endif %}
@@ -95,6 +89,6 @@ final:
 # Optionally write out the final analysis
 {% if output_file is defined %}
 output:
-{% set output_file = output_file|default('output', true) ~ '.yaml.j2' %}
+{% set output_file = output_file|default(model_component ~ 'output', true) ~ '.yaml.j2' %}
 {% include output_file %}
 {% endif %}

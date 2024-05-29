@@ -21,6 +21,7 @@
   - obs prior filters
   - obs post filters
   - obs bias
+3dfgat: *var
 4dvar: *var
 4denvar: *var
 

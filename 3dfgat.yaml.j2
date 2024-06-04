@@ -71,7 +71,7 @@ final:
 {% if final_increment_to_latlon_file is defined %}
   increment to latlon:
 {% filter indent(width=4) %}
-{% set final_increment_to_latlon_file = final_increment_to_latlon_file|default(model_component ~ 'final_increment_to_latlon', true) ~ '.yaml.j2' %}
+{% set final_increment_to_latlon_file = final_increment_to_latlon_file ~ '.yaml.j2' %}
 {% include final_increment_to_latlon_file %}
 {% endfilter %}
 {% endif %}
@@ -79,7 +79,7 @@ final:
 {% if final_analysis_to_latlon_file is defined %}
   analysis to latlon:
 {% filter indent(width=4) %}
-{% set final_analysis_to_latlon_file = final_analysis_to_latlon_file|default(model_component ~ 'final_analysis_to_latlon', true) ~ '.yaml.j2' %}
+{% set final_analysis_to_latlon_file = final_analysis_to_latlon_file ~ '.yaml.j2' %}
 {% include final_analysis_to_latlon_file %}
 {% endfilter %}
 {% endif %}
@@ -87,7 +87,7 @@ final:
 {% if final_increment_file is defined %}
   increment:
 {% filter indent(width=4) %}
-{% set final_increment_file = final_increment_file|default(model_component ~ 'final_increment', true) ~ '.yaml.j2' %}
+{% set final_increment_file = final_increment_file ~ '.yaml.j2' %}
 {% include final_increment_file %}
 {% endfilter %}
 {% endif %}
@@ -95,6 +95,26 @@ final:
 # Optionally write out the final analysis
 {% if output_file is defined %}
 output:
-{% set output_file = output_file|default(model_component ~ 'output', true) ~ '.yaml.j2' %}
+{% filter indent(width=2) %}
+{% set output_file = output_file ~ '.yaml.j2' %}
 {% include output_file %}
+{% endfilter %}
+{% endif %}
+
+# Optionally test the application
+{% if test_reference_filename is defined %}
+test:
+  reference filename: {{test_reference_filename}}
+{% if test_output_filename is defined %}
+  test output filename: {{test_output_filename}}
+{% endif %}
+{% if log_output_filename is defined %}
+  log output filename: {{log_output_filename}}
+{% endif %}
+{% if mpi_pattern is defined %}
+  mpi pattern: {{mpi_pattern}}
+{% endif %}
+  float relative tolerance: {{test_float_relative_tolerance | default(1.0e-6, true)}}
+  float absolute tolerance: {{test_float_absolute_tolerance | default(0.0, true) }}
+  integer tolerance: {{test_integer_tolerance | default(0, true) }}
 {% endif %}

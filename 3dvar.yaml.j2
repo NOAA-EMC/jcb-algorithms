@@ -65,7 +65,7 @@ final:
 {% if final_increment_to_latlon_file is defined %}
   increment to latlon:
 {% filter indent(width=4) %}
-{% set final_increment_to_latlon_file = final_increment_to_latlon_file|default(model_component ~ 'final_increment_to_latlon', true) ~ '.yaml.j2' %}
+{% set final_increment_to_latlon_file = final_increment_to_latlon_file ~ '.yaml.j2' %}
 {% include final_increment_to_latlon_file %}
 {% endfilter %}
 {% endif %}
@@ -73,7 +73,7 @@ final:
 {% if final_analysis_to_latlon_file is defined %}
   analysis to latlon:
 {% filter indent(width=4) %}
-{% set final_analysis_to_latlon_file = final_analysis_to_latlon_file|default(model_component ~ 'final_analysis_to_latlon', true) ~ '.yaml.j2' %}
+{% set final_analysis_to_latlon_file = final_analysis_to_latlon_file ~ '.yaml.j2' %}
 {% include final_analysis_to_latlon_file %}
 {% endfilter %}
 {% endif %}
@@ -81,7 +81,7 @@ final:
 {% if final_increment_file is defined %}
   increment:
 {% filter indent(width=4) %}
-{% set final_increment_file = final_increment_file|default(model_component ~ 'final_increment', true) ~ '.yaml.j2' %}
+{% set final_increment_file = final_increment_file ~ '.yaml.j2' %}
 {% include final_increment_file %}
 {% endfilter %}
 {% endif %}
@@ -89,8 +89,10 @@ final:
 # Optionally write out the final analysis
 {% if output_file is defined %}
 output:
-{% set output_file = output_file|default(model_component ~ 'output', true) ~ '.yaml.j2' %}
+{% filter indent(width=2) %}
+{% set output_file = output_file ~ '.yaml.j2' %}
 {% include output_file %}
+{% endfilter %}
 {% endif %}
 
 # Optionally test the application

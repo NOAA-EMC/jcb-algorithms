@@ -1,3 +1,6 @@
+# Set the model component to be used in later configuration
+{% set model_component = model_component|default('model_component') %}
+
 time window:
   begin: '{{window_begin}}'
   length: '{{window_length}}'
@@ -5,17 +8,18 @@ time window:
 
 geometry:
 {% filter indent(width=2) %}
-{% set geometry_background_file = geometry_background_file|default('geometry_background', true) ~ '.yaml.j2' %}
+{% set geometry_background_file = geometry_background_file|default(model_component ~ 'geometry_background', true) ~ '.yaml.j2' %}
 {% include geometry_background_file %}
 {% endfilter %}
 
 state:
 {% filter indent(width=2) %}
-{% set background_file = background_file|default('background', true) ~ '.yaml.j2' %}
+{% set background_file = background_file|default(model_component ~ 'background', true) ~ '.yaml.j2' %}
 {% include background_file %}
 {% endfilter %}
 
 observations:
+  obs perturbations: {{ obs_perturbations | default(false, true) }}
   observers:
 {% for observation_from_jcb in observations %}
 {% if use_observer(observation_from_jcb) %}

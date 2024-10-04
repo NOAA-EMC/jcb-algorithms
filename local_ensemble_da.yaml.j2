@@ -56,6 +56,7 @@ local ensemble DA:
 {% set driver_save_prior_mean = driver_save_prior_mean | default(false) %}
 {% set driver_save_posterior_mean_increment = driver_save_posterior_mean_increment | default(false) %}
 {% set driver_save_posterior_ensemble_increments = driver_save_posterior_ensemble_increments | default(false) %}
+{% set driver_save_recentered_posterior_ensemble_increments = driver_save_recentered_posterior_ensemble_increments | default(false) %}
 {% set driver_save_prior_variance = driver_save_prior_variance | default(false) %}
 {% set driver_save_posterior_variance = driver_save_posterior_variance | default(false) %}
 {% set driver_do_posterior_observer = driver_do_posterior_observer | default(true) %}
@@ -71,6 +72,7 @@ driver:
   save prior mean: {{ driver_save_prior_mean }}
   save posterior mean increment: {{ driver_save_posterior_mean_increment }}
   save posterior ensemble increments: {{ driver_save_posterior_ensemble_increments }}
+  save recentered posterior ensemble increments: {{ driver_save_centered_posterior_ensemble_increments }}
   save prior variance: {{ driver_save_prior_variance }}
   save posterior variance: {{ driver_save_posterior_variance }}
   do posterior observer: {{ driver_do_posterior_observer }}
@@ -149,6 +151,15 @@ output ensemble increments:
 {% filter indent(width=2) %}
 {% set output_ensemble_increments_file = output_ensemble_increments_file|default(model_component ~ 'output_ensemble_increments', true) ~ '.yaml.j2' %}
 {% include output_ensemble_increments_file %}
+{% endfilter %}
+{% endif %}
+
+# output recentered ensemble increments
+# -------------------------------------
+{% if driver_save_recentered_posterior_ensemble_increments %}
+output recentered ensemble increments:
+{% filter indent(width=2) %}
+{% set output_recentered_ensemble_increments_file = output_recentered_ensemble_increments_file|default(model_component ~ 'output_recentered_ensemble_increments', true) ~ '.yaml.j2' %}
 {% endfilter %}
 {% endif %}
 

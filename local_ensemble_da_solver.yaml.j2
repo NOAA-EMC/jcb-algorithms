@@ -158,6 +158,13 @@ output ensemble increments:
 # output recentered ensemble increments
 # -------------------------------------
 {% if driver_save_recentered_posterior_ensemble_increments %}
+deterministic analysis:
+{% filter indent(width=2) %}
+{% set deterministic_analysis_file = deterministic_analysis_file|default(model_component ~ 'deterministic_analysis', true) ~ '.yaml.j2' %}
+{% endfilter %}
+{% endif %}
+
+{% if driver_save_recentered_posterior_ensemble_increments %}
 output recentered ensemble increments:
 {% filter indent(width=2) %}
 {% set output_recentered_ensemble_increments_file = output_recentered_ensemble_increments_file|default(model_component ~ 'output_recentered_ensemble_increments', true) ~ '.yaml.j2' %}

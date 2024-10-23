@@ -19,6 +19,7 @@ jobs:
 
     env:
       JCB_REPO: https://github.com/NOAA-EMC/jcb.git
+      JCB_ALGO_REPO: https://github.com/NOAA-EMC/jcb-algorithms.git
 
     steps:
     - name: Set up Python
@@ -28,28 +29,43 @@ jobs:
 
     - name: Add repo url to the environment
       run: |
-        JCB_ALGO_REPO="${{ github.repository }}"
-        echo "JCB_ALGO_REPO=${JCB_ALGO_REPO}" >> $GITHUB_ENV
+        JCB_APP_REPO="${{ github.repository }}"
+        echo "JCB_APP_REPO=${JCB_APP_REPO}" >> $GITHUB_ENV
 
     - name: Determine the name of the client branch
       run: |
         if [ "${{ github.event_name }}" == "pull_request" ]; then
-        JCB_ALGO_BRANCH=${{ github.head_ref }}
+        JCB_APP_BRANCH=${{ github.head_ref }}
         else
           BRANCH_REF=${{ github.ref }}
-          JCB_ALGO_BRANCH=${BRANCH_REF#refs/heads/}
+          JCB_APP_BRANCH=${BRANCH_REF#refs/heads/}
         fi
-        echo "JCB_ALGO_BRANCH=$JCB_ALGO_BRANCH" >> $GITHUB_ENV
+        echo "JCB_APP_BRANCH=$JCB_APP_BRANCH" >> $GITHUB_ENV
 
-    - name: Determine branch to use for main jcb repo
+    - name: Check for existence of the branch name in the main jcb repo
       run: |
-        BRANCH_NAME=${{ env.JCB_ALGO_BRANCH }}
+        BRANCH_NAME=${{ env.JCB_APP_BRANCH }}
         if git ls-remote --heads $JCB_REPO $BRANCH_NAME | grep -q "refs/heads/$BRANCH_NAME"; then
+
           echo "Branch $BRANCH_NAME exists in jcb repo."
-          echo "JCB_BRANCH=$BRANCH_NAME" >> $GITHUB_ENV
+
         else
-          echo "Branch $BRANCH_NAME does not exist in jcb repo. Using develop branch."
-          echo "JCB_BRANCH=develop" >> $GITHUB_ENV
+
+          # If the tested jcb-algorithms branch does not exist in the main jcb repo then we need to
+          # throw an error. This is not a safe situation. The developer should create a branch in
+          # the main jcb repo with the same name as the branch in the jcb-application repo.
+          # If there were branches in other apps to account for the changes in the algorithm repo
+          # they could not be tested here since the scipt is not clever enough to check for
+          # the existence of the branch being tested here in all the clients. The safest thing to do
+          # is simply create a branch with the same name (even if empty) in the main jcb repo. This
+          # will ensure the branches of the other applications are checked out by the init script.
+
+          echo "The $BRANCH_NAME being tested for jcb-algorithms does not exist in the main jcb "
+          echo "repo. Please create a branch with the same name in the jcb repo (even if empty). "
+          echo "This ensures that where you have made branches with the same name in the clients "
+          echo "they will be checked out by the cleint intialization script."
+          exit 1
+
         fi
 
     - name: Clone jcb repository
@@ -63,8 +79,6 @@ jobs:
         cd jcb_repo
         pip install pyyaml
         ./jcb_client_init.py
-        # Note that the above step will take care of checking out the correct branch of the
-        # algorithm repo and any clients being simultaneously modified.
 
     - name: Install dependencies
       run: |

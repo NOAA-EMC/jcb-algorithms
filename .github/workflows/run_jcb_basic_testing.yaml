@@ -27,24 +27,19 @@ jobs:
       with:
         python-version: '3.x'
 
-    - name: Add repo url to the environment
-      run: |
-        JCB_APP_REPO="${{ github.repository }}"
-        echo "JCB_APP_REPO=${JCB_APP_REPO}" >> $GITHUB_ENV
-
-    - name: Determine the name of the client branch
+    - name: Determine the name of the algorithm branch
       run: |
         if [ "${{ github.event_name }}" == "pull_request" ]; then
-        JCB_APP_BRANCH=${{ github.head_ref }}
+          JCB_ALGO_BRANCH=${{ github.head_ref }}
         else
           BRANCH_REF=${{ github.ref }}
-          JCB_APP_BRANCH=${BRANCH_REF#refs/heads/}
+          JCB_ALGO_BRANCH=${BRANCH_REF#refs/heads/}
         fi
-        echo "JCB_APP_BRANCH=$JCB_APP_BRANCH" >> $GITHUB_ENV
+        echo "JCB_ALGO_BRANCH=$JCB_ALGO_BRANCH" >> $GITHUB_ENV
 
     - name: Check for existence of the branch name in the main jcb repo
       run: |
-        BRANCH_NAME=${{ env.JCB_APP_BRANCH }}
+        BRANCH_NAME=${{ env.JCB_ALGO_BRANCH }}
         if git ls-remote --heads $JCB_REPO $BRANCH_NAME | grep -q "refs/heads/$BRANCH_NAME"; then
 
           echo "Branch $BRANCH_NAME exists in jcb repo."
@@ -73,7 +68,7 @@ jobs:
       run: |
         mkdir -p empty_hooks
         git config --global core.hooksPath empty_hooks
-        git clone --branch ${{ env.JCB_BRANCH }} --recursive $JCB_REPO jcb_repo
+        git clone --branch ${{ env.JCB_ALGO_BRANCH }} $JCB_REPO jcb_repo
 
     - name: Clone the clients
       run: |

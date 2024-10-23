@@ -60,10 +60,11 @@ jobs:
           # is simply create a branch with the same name (even if empty) in the main jcb repo. This
           # will ensure the branches of the other applications are checked out by the init script.
 
-          echo "The $BRANCH_NAME being tested for jcb-algorithms does not exist in the main jcb "
-          echo "repo. Please create a branch with the same name in the jcb repo (even if empty). "
-          echo "This ensures that where you have made branches with the same name in the clients "
-          echo "they will be checked out by the cleint intialization script."
+          echo "The $BRANCH_NAME branch begin tested for jcb-algorithms does not exist in the main "
+          echo "jcb repo. Please create a branch with the same name in the jcb repo (even if "
+          echo "empty and without PR). This ensures that where you have made branches with the "
+          echo "same name in any clients they will be checked out by the cleint intialization "
+          echo "script."
           exit 1
 
         fi

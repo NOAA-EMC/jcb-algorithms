@@ -1,0 +1,87 @@
+name: Run JCB client testing with client changes
+
+on:
+  push:
+    branches:
+      - develop
+  pull_request:
+    types:
+      - opened
+      - synchronize
+      - reopened
+
+jobs:
+
+  jcb_integration_tests:
+
+    runs-on: ubuntu-latest
+    name: JCB Client Integration Tests
+
+    env:
+      JCB_REPO: https://github.com/NOAA-EMC/jcb.git
+      JCB_ALGO_REPO: https://github.com/NOAA-EMC/jcb-algorithms.git
+
+    steps:
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.x'
+
+    - name: Determine the name of the algorithm branch
+      run: |
+        if [ "${{ github.event_name }}" == "pull_request" ]; then
+          JCB_ALGO_BRANCH=${{ github.head_ref }}
+        else
+          BRANCH_REF=${{ github.ref }}
+          JCB_ALGO_BRANCH=${BRANCH_REF#refs/heads/}
+        fi
+        echo "JCB_ALGO_BRANCH=$JCB_ALGO_BRANCH" >> $GITHUB_ENV
+
+    - name: Check for existence of the branch name in the main jcb repo
+      run: |
+        BRANCH_NAME=${{ env.JCB_ALGO_BRANCH }}
+        if git ls-remote --heads $JCB_REPO $BRANCH_NAME | grep -q "refs/heads/$BRANCH_NAME"; then
+
+          echo "Branch $BRANCH_NAME exists in jcb repo."
+
+        else
+
+          # If the tested jcb-algorithms branch does not exist in the main jcb repo then we need to
+          # throw an error. This is not a safe situation. The developer should create a branch in
+          # the main jcb repo with the same name as the branch in the jcb-application repo.
+          # If there were branches in other apps to account for the changes in the algorithm repo
+          # they could not be tested here since the scipt is not clever enough to check for
+          # the existence of the branch being tested here in all the clients. The safest thing to do
+          # is simply create a branch with the same name (even if empty) in the main jcb repo. This
+          # will ensure the branches of the other applications are checked out by the init script.
+
+          echo "The $BRANCH_NAME branch begin tested for jcb-algorithms does not exist in the main "
+          echo "jcb repo. Please create a branch with the same name in the jcb repo (even if "
+          echo "empty and without PR). This ensures that where you have made branches with the "
+          echo "same name in any clients they will be checked out by the cleint intialization "
+          echo "script."
+          exit 1
+
+        fi
+
+    - name: Clone jcb repository
+      run: |
+        mkdir -p empty_hooks
+        git config --global core.hooksPath empty_hooks
+        git clone --branch ${{ env.JCB_ALGO_BRANCH }} $JCB_REPO jcb_repo
+
+    - name: Clone the clients
+      run: |
+        cd jcb_repo
+        pip install pyyaml
+        ./jcb_client_init.py
+
+    - name: Install dependencies
+      run: |
+        cd jcb_repo
+        pip install .[testing]
+
+    - name: Run the JCB client integration tests
+      run: |
+        cd jcb_repo/test/client_integration
+        pytest -v

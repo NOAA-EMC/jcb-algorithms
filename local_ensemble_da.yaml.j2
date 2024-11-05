@@ -173,7 +173,7 @@ output variance posterior:
 {% endif %}
 
 # Optionally test the application
-{% if test_reference_filename is defined %}
+{% if atmosphere_do_testing %}
 test:
   reference filename: {{test_reference_filename}}
 {% if test_output_filename is defined %}

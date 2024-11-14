@@ -1,0 +1,9 @@
+time window:
+  begin: '{{window_begin}}'
+
+obs spaces:
+{% for obspace in obspaces %}
+{% filter indent(width=2) %}
+{% include obspace + '_template.yaml.j2' %}
+{% endfilter %}
+{% endfor %}

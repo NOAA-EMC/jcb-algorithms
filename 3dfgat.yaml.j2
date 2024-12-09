@@ -5,7 +5,7 @@ cost function:
 
   cost type: 3D-FGAT
 
-  jb evaluation: false
+  jb evaluation: {{ jb_evaluation | default(true) }}
 
   time window:
     begin: '{{window_begin}}'
@@ -122,4 +122,4 @@ test:
 {% endif %}
 
 # Turn off the final J eval
-final j evaluation: false
+final j evaluation: {{ final_j_evaluation | default(true) }}

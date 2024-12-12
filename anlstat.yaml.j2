@@ -1,6 +1,6 @@
 time window:
-  begin: '{{window_begin}}'
-  length: '{{window_length}}'
+  begin: '{{ stat_current_cycle_iso }}'
+  length: '{{ window_length }}'
   bound to include: '{{ bound_to_include | default("begin", true) }}'
 
 obs spaces:

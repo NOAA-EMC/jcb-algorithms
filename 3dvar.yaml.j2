@@ -5,6 +5,8 @@ cost function:
 
   cost type: 3D-Var
 
+  jb evaluation: {{ jb_evaluation | default(false) }}
+
   time window:
     begin: '{{window_begin}}'
     length: '{{window_length}}'
@@ -112,3 +114,6 @@ test:
   float absolute tolerance: {{test_float_absolute_tolerance | default(0.0, true) }}
   integer tolerance: {{test_integer_tolerance | default(0, true) }}
 {% endif %}
+
+# Turn off the final J eval
+final j evaluation: {{ final_j_evaluation | default(false) }}

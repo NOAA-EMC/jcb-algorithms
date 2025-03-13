@@ -4,7 +4,7 @@ time window:
   bound to include: '{{ bound_to_include | default("begin", true) }}'
 
 obs spaces:
-{% for obspace in obspaces %}
+{% for obspace in obsspaces %}
 {% filter indent(width=2) %}
 {% include obspace + '_template.yaml.j2' %}
 {% endfilter %}

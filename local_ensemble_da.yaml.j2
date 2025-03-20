@@ -12,7 +12,9 @@ time window:
   length: '{{window_length}}'
   bound to include: '{{ bound_to_include | default("begin", true) }}'
 
+{%- if increment_variables is defined %}
 increment variables: {{increment_variables}}
+{%- endif %}
 
 background:
 {% filter indent(width=2) %}

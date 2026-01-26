@@ -66,6 +66,7 @@ local_ensemble_da:
   components:
   - obs space
   - obs operator
+  - linear obs operator
   - obs filters
   - obs pre filters
   - obs prior filters

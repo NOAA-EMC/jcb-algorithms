@@ -27,7 +27,7 @@ observations:
 {% set vader_custom_cookbook_file = vader_custom_cookbook_file ~ '.yaml.j2' %}
 {% include vader_custom_cookbook_file %}
 {% endfilter %}
-{% endif %}:
+{% endif %}
   observers:
 {% for observation_from_jcb in observations %}
 {% if use_observer(observation_from_jcb) %}

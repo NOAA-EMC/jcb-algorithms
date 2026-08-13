@@ -27,6 +27,13 @@ model:
 
 observations:
   obs perturbations: {{ obs_perturbations | default(false, true) }}
+{% if vader_custom_cookbook_file is defined %}
+  get values:
+{% filter indent(width=4) %}
+{% set vader_custom_cookbook_file = vader_custom_cookbook_file ~ '.yaml.j2' %}
+{% include vader_custom_cookbook_file %}
+{% endfilter %}
+{% endif %}
   observers:
 {% for observation_from_jcb in observations %}
 {% if use_observer(observation_from_jcb) %}
